@@ -1,0 +1,42 @@
+# === Global ignores ===
+.DS_Store
+Thumbs.db
+*.log
+*.local
+
+# === Node.js / Frontend ===
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.env
+frontend/*.local
+
+# Vite / Tailwind / React related
+frontend/.vscode/
+frontend/.idea/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+frontend/lerna-debug.log*
+
+# === Python / Backend ===
+backend/env/
+backend/.env
+backend/__pycache__/
+backend/*.pyc
+backend/*.pyo
+backend/.vscode/
+backend/.idea/
+backend/*.log
+backend/dist/
+
+# === Root-level general ===
+.vscode/
+.idea/
+.env
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
