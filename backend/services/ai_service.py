@@ -22,7 +22,7 @@ def generate_task_description(title: str) -> str:
     """
 
     response = anthropic.messages.create(
-        model="claude-3-opus-20240229",
+        model="claude-opus-4-6",
         max_tokens=200,
         messages=[
             {
@@ -35,7 +35,7 @@ def generate_task_description(title: str) -> str:
     return response.content[0].text.strip()
 
 def summarize_pending_tasks(tasks: list) -> str:
-    Task_list = "\n".join([f"- {task['title']}: {task.description or 'No Description'} (Status: {task['status']})" for task in tasks])
+    Task_list = "\n".join([f"- {task.title}: {task.description or 'No Description'} (Status: {task.status})" for task in tasks])
     
     prompt = f"""
     You are an AI assistant that summarizes pending tasks.
@@ -53,7 +53,7 @@ def summarize_pending_tasks(tasks: list) -> str:
     """
 
     response = anthropic.messages.create(
-        model="claude-3-opus-20240229",
+        model="claude-opus-4-6",
         max_tokens=200,
         messages=[
             {
@@ -66,7 +66,7 @@ def summarize_pending_tasks(tasks: list) -> str:
     return response.content[0].text.strip()
 
 def suggest_priorities(tasks: list) -> list:
-    task_list = "\n".join([f"- {task['title']}: {task.description or 'No Description'} (Status: {task['status']})" for task in tasks])
+    task_list = "\n".join([f"- {task.title}: {task.description or 'No Description'} (Status: {task.status})" for task in tasks])
 
     prompt = f"""
     You are an AI assistant that suggests priorities for tasks.
@@ -83,7 +83,7 @@ def suggest_priorities(tasks: list) -> list:
     return the priority order as a list of strings.
     """
     response = anthropic.messages.create(
-        model="claude-3-opus-20240229",
+        model="claude-opus-4-6",
         max_tokens=200,
         messages=[
             {

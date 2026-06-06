@@ -6,6 +6,8 @@ import {
   updateTask,
   getTasksByStatus,
   deleteTask,
+  getTaskSummary,
+  getSuggestedPriorities,
 } from "../services/api";
 
 const statusConfig = {
@@ -41,6 +43,10 @@ export default function TaskList() {
   const [selectedTask, setSelectedTask] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [summary, setSummary] = useState(null);
+  const [priorities, setPriorities] = useState(null);
+  const [summaryLoading, setSummaryLoading] = useState(false);
+  const [prioritiesLoading, setPrioritiesLoading] = useState(false);
 
   const loadTasks = async () => {
     setIsLoading(true);
@@ -97,6 +103,30 @@ export default function TaskList() {
     }
   };
 
+  const handleGetSummary = async () => {
+    setSummaryLoading(true);
+    try {
+      const data = await getTaskSummary();
+      setSummary(data);
+    } catch (error) {
+      console.error("Error getting task summary:", error);
+    } finally {
+      setSummaryLoading(false);
+    }
+  };
+
+  const handleGetPriorities = async () => {
+    setPrioritiesLoading(true);
+    try {
+      const data = await getSuggestedPriorities();
+      setPriorities(data);
+    } catch (error) {
+      console.error("Error getting suggested priorities:", error);
+    } finally {
+      setPrioritiesLoading(false);
+    }
+  };
+
   useEffect(() => {
     loadTasks();
   }, [filterStatus]);
@@ -114,6 +144,120 @@ export default function TaskList() {
         <div className="indicator-bar"></div>
         <h2 className="section-title">Mis Tareas</h2>
         <span className="task-counter">{getFilteredTasks().length}</span>
+      </div>
+
+      {/* AI Tools */}
+      <div className="ai-tools" style={{ marginBottom: "2rem" }}>
+        <label className="form-label">Herramientas IA</label>
+        <div
+          style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}
+        >
+          <button
+            onClick={handleGetSummary}
+            disabled={summaryLoading}
+            className="btn btn-primary"
+            style={{ flex: 1, minWidth: "200px", width: "auto" }}
+          >
+            {summaryLoading ? (
+              <>
+                <div className="spinner"></div>
+                <span>Resumiendo...</span>
+              </>
+            ) : (
+              <span>📋 Resumir tareas</span>
+            )}
+          </button>
+          <button
+            onClick={handleGetPriorities}
+            disabled={prioritiesLoading}
+            className="btn btn-primary"
+            style={{ flex: 1, minWidth: "200px", width: "auto" }}
+          >
+            {prioritiesLoading ? (
+              <>
+                <div className="spinner"></div>
+                <span>Analizando...</span>
+              </>
+            ) : (
+              <span>🎯 Sugerir prioridades</span>
+            )}
+          </button>
+        </div>
+
+        {/* Resultado: resumen */}
+        {summary && (
+          <div
+            className="glass-card"
+            style={{ marginTop: "1rem", position: "relative" }}
+          >
+            <button
+              onClick={() => setSummary(null)}
+              className="btn-icon btn-danger"
+              title="Cerrar"
+              style={{ position: "absolute", top: "0.75rem", right: "0.75rem" }}
+            >
+              <svg
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <h3 className="section-title" style={{ marginBottom: "0.75rem" }}>
+              📋 Resumen de tareas
+            </h3>
+            <p className="task-description">{summary.summary}</p>
+          </div>
+        )}
+
+        {/* Resultado: prioridades */}
+        {priorities && (
+          <div
+            className="glass-card"
+            style={{ marginTop: "1rem", position: "relative" }}
+          >
+            <button
+              onClick={() => setPriorities(null)}
+              className="btn-icon btn-danger"
+              title="Cerrar"
+              style={{ position: "absolute", top: "0.75rem", right: "0.75rem" }}
+            >
+              <svg
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <h3 className="section-title" style={{ marginBottom: "0.75rem" }}>
+              🎯 Prioridades sugeridas
+            </h3>
+            <ol style={{ paddingLeft: "1.25rem", lineHeight: 1.8 }}>
+              {(priorities.priorities || []).map((item, index) => (
+                <li key={index} className="task-description">
+                  <strong>{item.task_title}</strong>
+                  {item.suggest_priorities ? ` — ${item.suggest_priorities}` : ""}
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
       </div>
 
       {/* Filtros */}

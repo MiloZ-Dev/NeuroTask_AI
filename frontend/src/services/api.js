@@ -85,3 +85,25 @@ export const autoCompleteDescription = async (title) => {
     throw error;
   }
 };
+
+// get an AI-generated summary of pending tasks from the API
+export const getTaskSummary = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/Task/summary`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching task summary:", error);
+    throw error;
+  }
+};
+
+// get AI-suggested task priorities from the API
+export const getSuggestedPriorities = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/Task/suggest_priorities`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching suggested priorities:", error);
+    throw error;
+  }
+};
